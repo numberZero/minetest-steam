@@ -1,10 +1,11 @@
--------------------------------------------------------------------------------
--- @module rotary
+-- This file is part of the steam/rotary Minetest mod
+
 rotary = {}
 
 local path = minetest.get_modpath("rotary")
 dofile(path.."/util.lua")
 dofile(path.."/gearbox.lua")
+dofile(path.."/splitter.lua")
 
 function rotary.get_consumer(pos, dir)
 	local npos = vector.add(pos, dir)
@@ -14,6 +15,15 @@ function rotary.get_consumer(pos, dir)
 		return npos, node, def
 	end
 	return nil
+end
+
+local initial_gearbox_facedir = { [0] = 14, 11, 16, 5 }
+
+function rotary.init_gbox_facedir(pos)
+	local node = minetest.get_node(pos)
+	if node.param2 >= 4 then return end
+	node.param2 = initial_gearbox_facedir[node.param2]
+	minetest.swap_node(pos, node)
 end
 
 -------------------------------------------------------------------------------
@@ -114,7 +124,6 @@ minetest.register_node("rotary:consumer", {
 		meta:set_string("formspec", "size[4,2]label[1.0,0.0;Consumer]")
 	end,
 	rotary = {
---		run = step_consumer_1,
 		passive = consume_1,
 	},
 })
