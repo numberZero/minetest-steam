@@ -144,6 +144,21 @@ minetest.register_node("rotary:engine_admin", {
 	},
 })
 
+minetest.register_craftitem("rotary:gear1_dark_iron", {
+	description = "Small Dark Iron Gear",
+	inventory_image = "rotary_gear1_light.png^[colorize:#3c3450:200",
+})
+
+minetest.register_craftitem("rotary:gear2_dark_iron", {
+	description = "Medium Dark Iron Gear",
+	inventory_image = "rotary_gear2_light.png^[colorize:#3c3450:200",
+})
+
+minetest.register_craftitem("rotary:gear3_dark_iron", {
+	description = "Large Dark Iron Gear",
+	inventory_image = "rotary_gear3_light.png^[colorize:#3c3450:200",
+})
+
 minetest.register_abm({
 	nodenames = {
 		"group:rotary_active",
