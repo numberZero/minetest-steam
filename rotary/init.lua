@@ -49,6 +49,10 @@ end
 -- @param core#vector dir	direction _into_ the consumer
 -- @return #number torque (consumed)
 local function consume_1(pos, node, def, speed, dir)
+	local tripod = rotary.facedir_to_tripod(node.param2)
+	if not vector.equals(dir, tripod.u) then
+		return nil -- incorrect input direction
+	end
 	local meta = minetest.get_meta(pos)
 	meta:set_float("input_speed", speed) 
 	meta:set_string("formspec", 
@@ -185,7 +189,7 @@ minetest.register_node("rotary:engine_admin", {
 	paramtype2 = "facedir",
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec", formspec)
+		meta:set_string("formspec", "size[4,2.2]label[1,0.0;Admin Generator]")
 	end,
 	rotary = {
 		active = step_generator_1,
