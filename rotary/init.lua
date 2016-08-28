@@ -2,6 +2,20 @@
 
 rotary = {}
 
+rotary.nodebox = {
+	casing_full	= {-0.500, -0.500, -0.500, 0.500, 0.500, 0.500},
+	casing_half	= {-0.250, -0.250, -0.250, 0.250, 0.250, 0.250},
+	shaft_x	= {-0.500, -0.125, -0.125, 0.500, 0.125, 0.125},
+	shaft_y	= {-0.125, -0.500, -0.125, 0.125, 0.500, 0.125},
+	shaft_z	= {-0.125, -0.125, -0.500, 0.125, 0.125, 0.500},
+	input_ym	= {-0.0625, -0.5625, -0.0625, 0.0625, 0.5000, 0.0625},
+}
+
+rotary.nodebox.shaft_u = rotary.nodebox.shaft_z
+rotary.nodebox.shaft_v = rotary.nodebox.shaft_x
+rotary.nodebox.shaft_w = rotary.nodebox.shaft_y
+rotary.nodebox.input_wm = rotary.nodebox.input_ym
+
 local path = minetest.get_modpath("rotary")
 dofile(path.."/util.lua")
 dofile(path.."/gearbox.lua")
@@ -108,12 +122,12 @@ local formspec =
 minetest.register_node("rotary:consumer", {
 	description = "Rotation consumer",
 	tiles = {
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_copper_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png"
+		"rotary_dark_iron_block.png",
+		"rotary_dark_iron_block.png",
+		"rotary_dark_iron_block.png",
+		"rotary_dark_iron_block.png^rotary_input.png",
+		"rotary_dark_iron_block.png",
+		"rotary_dark_iron_block.png",
 	},
 	groups = {
 		cracky = 3,
@@ -133,10 +147,36 @@ minetest.register_node("rotary:engine_fuel", {
 	tiles = {
 		"default_furnace_top.png",
 		"default_furnace_bottom.png",
-		"default_bronze_block.png",
+		"default_furnace_side.png^rotary_output.png",
 		"default_furnace_side.png",
 		"default_furnace_side.png",
-		"default_furnace_front.png"
+		"default_furnace_front.png",
+	},
+	groups = {
+		cracky = 3,
+		rotary_active = 1
+	},
+	paramtype2 = "facedir",
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+--		meta:set_string("formspec", formspec)
+		local inv = meta:get_inventory()
+		inv:set_size('fuel', 1)
+	end,
+	rotary = {
+		active = function() end,
+	},
+})
+
+minetest.register_node("rotary:engine_admin", {
+	description = "Admin Engine",
+	tiles = {
+		"default_diamond_block.png",
+		"default_diamond_block.png",
+		"default_diamond_block.png^rotary_output.png",
+		"default_diamond_block.png",
+		"default_diamond_block.png",
+		"default_diamond_block.png"
 	},
 	groups = {
 		cracky = 3,
@@ -146,8 +186,6 @@ minetest.register_node("rotary:engine_fuel", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", formspec)
-		local inv = meta:get_inventory()
-		inv:set_size('fuel', 1)
 	end,
 	rotary = {
 		active = step_generator_1,

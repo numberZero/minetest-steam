@@ -54,12 +54,12 @@ end
 minetest.register_node("rotary:gearbox", {
 	description = "Gearbox",
 	tiles = {
-		"default_bronze_block.png",
-		"default_copper_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png",
-		"default_steel_block.png"
+		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png^rotary_input.png",
+		"rotary_dark_iron_half_block.png",
+		"rotary_dark_iron_half_block.png",
+		"rotary_dark_iron_half_block.png",
+		"rotary_dark_iron_half_block.png",
 	},
 	groups = {
 		cracky = 3,
@@ -70,8 +70,9 @@ minetest.register_node("rotary:gearbox", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{-0.3, -0.3, -0.3, 0.3, 0.3, 0.3},
-			{-0.1, -0.5, -0.1, 0.1, 0.5, 0.1},
+			rotary.nodebox.casing_half,
+			rotary.nodebox.shaft_w,
+			rotary.nodebox.input_wm,
 		},
 	},
 	sunlight_propagates = true,

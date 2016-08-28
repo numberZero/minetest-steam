@@ -49,12 +49,12 @@ end
 minetest.register_node("rotary:splitter", {
 	description = "Frictionless Splitter",
 	tiles = {
-		"default_bronze_block.png",
-		"default_copper_block.png",
-		"default_bronze_block.png",
-		"default_bronze_block.png",
-		"default_bronze_block.png",
-		"default_bronze_block.png",
+		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png^rotary_input.png",
+		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png^rotary_output.png",
 	},
 	groups = {
 		cracky = 3,
@@ -65,10 +65,11 @@ minetest.register_node("rotary:splitter", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{-0.3, -0.3, -0.3, 0.3, 0.3, 0.3},
-			{-0.5, -0.1, -0.1, 0.5, 0.1, 0.1},
-			{-0.1, -0.5, -0.1, 0.1, 0.5, 0.1},
-			{-0.1, -0.1, -0.5, 0.1, 0.1, 0.5},
+			rotary.nodebox.casing_half,
+			rotary.nodebox.shaft_u,
+			rotary.nodebox.shaft_v,
+			rotary.nodebox.shaft_w,
+			rotary.nodebox.input_wm,
 		},
 	},
 	sunlight_propagates = true,
