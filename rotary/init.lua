@@ -70,31 +70,18 @@ end
 -- @param core#node_def	def
 local function step_generator_1(pos, node, def)
 	local meta = minetest.get_meta(pos)
-	local speed = meta:get_float("speed");
 	local tripod = rotary.facedir_to_tripod(node.param2)
---	print("Direction: " .. dump(tripod.u))
 	local cpos, cnode, cdef = rotary.get_consumer(pos, tripod.u)
-	local generated_torque = 100;
-	local used_torque = cdef and cdef.rotary.passive(cpos, cnode, cdef, speed, tripod.u) or 0
-	local acceleration_torque = generated_torque - used_torque
-	local acceleration = acceleration_torque / 10.0
-	local friction = 0.05
-	speed = speed + acceleration
-	speed = (1 - friction) * speed
-	if speed < 0 then
-		speed = 0
-	end
-	local stable = acceleration * (1 - friction) / friction
+	local speed = 20.0
+	local torque = cdef and cdef.rotary.passive(cpos, cnode, cdef, speed, tripod.u) or 0
+	local power = torque * speed
 	meta:set_float("speed", speed);
 	meta:set_string("formspec", 
-		"size[4,2.2]"
-		.."label[1,0.0;Admin Generator]"
-		.."label[0,0.4;Speed: "..speed.."]"
-		.."label[0,0.7;Generation: "..generated_torque.."]"
-		.."label[0,1.0;Usage: "..used_torque.."]"
-		.."label[0,1.3;Acceleration: "..acceleration.."]"
-		.."label[0,1.6;Friction: "..friction.."]"
-		.."label[0,1.9;Stable speed: "..stable.."]"
+		"size[3,1.3]"
+		.."label[0.5,0.0;Admin Generator]"
+		.."label[0,0.4;Speed: "..speed.." rps]"
+		.."label[0,0.7;Power: "..power.." W]"
+		.."label[0,1.0;Torque: "..torque.." N•m]"
 		)
 end
 
