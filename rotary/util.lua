@@ -44,7 +44,7 @@ local map_w = { [0] =
 -- @function [parent=steam#steam] facedir_to_tripod
 -- @param #number facedir Node facedir
 -- @return #tripod Axis tripod
-function steam.facedir_to_tripod(facedir)
+function rotary.facedir_to_tripod(facedir)
 	return {
 		u = map_u[facedir],
 		v = map_v[facedir],

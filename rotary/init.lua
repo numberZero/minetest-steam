@@ -1,25 +1,19 @@
 -------------------------------------------------------------------------------
--- @module steam
-steam = {}
+-- @module rotary
+rotary = {}
 
-local path = minetest.get_modpath("steam")
+local path = minetest.get_modpath("rotary")
 dofile(path.."/util.lua")
+dofile(path.."/gearbox.lua")
 
-local function get_consumer(pos, dir)
+function rotary.get_consumer(pos, dir)
 	local npos = vector.add(pos, dir)
 	local node = minetest.get_node(npos)
-	if node.name ~= "steam:consumer" then
-		return nil
+	local def = minetest.registered_nodes[node.name]
+	if def.rotary and def.rotary.passive then
+		return npos, node, def
 	end
-	return npos, node, minetest.registered_nodes[node.name]
-end
-
--------------------------------------------------------------------------------
--- @function step_consumer_1
--- @param core#vector	pos
--- @param core#node	node
--- @param core#node_def	def
-local function step_consumer_1(pos, node, def)
+	return nil
 end
 
 -------------------------------------------------------------------------------
@@ -48,11 +42,11 @@ end
 local function step_generator_1(pos, node, def)
 	local meta = minetest.get_meta(pos)
 	local speed = meta:get_float("speed");
-	local tripod = steam.facedir_to_tripod(node.param2)
+	local tripod = rotary.facedir_to_tripod(node.param2)
 --	print("Direction: " .. dump(tripod.u))
-	local cpos, cnode, cdef = get_consumer(pos, tripod.u)
-	local generated_torque = 50;
-	local used_torque = cdef and cdef.steam.consume(cpos, cnode, cdef, speed, tripod.u) or 0
+	local cpos, cnode, cdef = rotary.get_consumer(pos, tripod.u)
+	local generated_torque = 100;
+	local used_torque = cdef and cdef.rotary.passive(cpos, cnode, cdef, speed, tripod.u) or 0
 	local acceleration_torque = generated_torque - used_torque
 	local acceleration = acceleration_torque / 10.0
 	local friction = 0.05
@@ -81,7 +75,10 @@ end
 -- @param core#node	node	is the node
 local function step_node(pos, node)
 	local def = minetest.registered_nodes[node.name]
-	def.steam.run(pos, node, def)
+	if def.rotary and def.rotary.active then
+		return def.rotary.active(pos, node, def)
+	end
+	minetest.log("error", "rotary:step_node called for non-rotary-compatible node "..node.name.." at "..minetest.pos_to_string(pos))
 end
 
 local formspec =
@@ -98,7 +95,7 @@ local formspec =
 	"listring[current_player;main]"..
 	default.get_hotbar_bg(0, 4.25)
 
-minetest.register_node("steam:consumer", {
+minetest.register_node("rotary:consumer", {
 	description = "Rotation consumer",
 	tiles = {
 		"default_steel_block.png",
@@ -114,16 +111,16 @@ minetest.register_node("steam:consumer", {
 	paramtype2 = "facedir",
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec", "size[4,2]label[0.5,0.5;Free]")
+		meta:set_string("formspec", "size[4,2]label[1.0,0.0;Consumer]")
 	end,
-	steam = {
-		run = step_consumer_1,
-		consume = consume_1,
+	rotary = {
+--		run = step_consumer_1,
+		passive = consume_1,
 	},
 })
 
-minetest.register_node("steam:engine_fuel", {
-	description = "Self-contained steam engine (fuel-fired)",
+minetest.register_node("rotary:engine_fuel", {
+	description = "Self-contained rotary engine (fuel-fired)",
 	tiles = {
 		"default_furnace_top.png",
 		"default_furnace_bottom.png",
@@ -134,7 +131,7 @@ minetest.register_node("steam:engine_fuel", {
 	},
 	groups = {
 		cracky = 3,
-		steam_active = 1
+		rotary_active = 1
 	},
 	paramtype2 = "facedir",
 	on_construct = function(pos)
@@ -143,18 +140,18 @@ minetest.register_node("steam:engine_fuel", {
 		local inv = meta:get_inventory()
 		inv:set_size('fuel', 1)
 	end,
-	steam = {
-		run = step_generator_1,
+	rotary = {
+		active = step_generator_1,
 	},
 })
 
 minetest.register_abm({
 	nodenames = {
-		"group:steam_active",
+		"group:rotary_active",
 	},
 	interval = 1,
 	chance = 1,
 	action = step_node,
 })
 
-return steam
+return rotary
