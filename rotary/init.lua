@@ -18,6 +18,7 @@ rotary.nodebox.input_wm = rotary.nodebox.input_ym
 
 local path = minetest.get_modpath("rotary")
 dofile(path.."/util.lua")
+dofile(path.."/craftitems.lua")
 dofile(path.."/gearbox.lua")
 dofile(path.."/splitter.lua")
 dofile(path.."/generator.lua")
@@ -142,21 +143,6 @@ minetest.register_node("rotary:engine_admin", {
 	rotary = {
 		active = step_generator_1,
 	},
-})
-
-minetest.register_craftitem("rotary:gear1_dark_iron", {
-	description = "Small Dark Iron Gear",
-	inventory_image = "rotary_gear1_light.png^[colorize:#3c3450:200",
-})
-
-minetest.register_craftitem("rotary:gear2_dark_iron", {
-	description = "Medium Dark Iron Gear",
-	inventory_image = "rotary_gear2_light.png^[colorize:#3c3450:200",
-})
-
-minetest.register_craftitem("rotary:gear3_dark_iron", {
-	description = "Large Dark Iron Gear",
-	inventory_image = "rotary_gear3_light.png^[colorize:#3c3450:200",
 })
 
 minetest.register_abm({
