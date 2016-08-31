@@ -26,6 +26,11 @@ function register_metal(name, def)
 	local color1 = def.color or "#F0F"
 	local color2 = def.ore_color or "#310"
 -- Ingot
+-- Crushed metal
+	minetest.register_craftitem(string.format("%s_crushed", rname), {
+		description = string.format("Crushed %s", longname),
+		inventory_image = string.format("rotary_crushed_ore_light_1.png^[colorize:%s:100^(rotary_crushed_ore_light_2.png^[colorize:%s:150)", color1, color1),
+	})
 -- Ore
 	if def.ore ~= false then
 -- Lump
@@ -65,6 +70,10 @@ function register_metal(name, def)
 	end
 	-- no mixing! use precision balance
 -- Plates
+	minetest.register_craftitem(string.format("%s_plate", rname), {
+		description = string.format("%s Plate", longname),
+		inventory_image = string.format("rotary_plate_light.png^[colorize:%s:200", color1),
+	})
 -- Gears
 	if def.machinery ~= false then
 		register_gears(name, longname, color1)
