@@ -49,7 +49,7 @@ function register_metal(name, def)
 	for id, size in ipairs(item_size) do
 		minetest.register_craftitem(string.format("%s_dust%d", rname, id), {
 			description = string.format("%s Pile of %s Dust", size, longname),
-			inventory_image = string.format("rotary_dust%d_light.png^[colorize:%s:200", id, color1),
+			inventory_image = string.format("rotary_dust%d_light.png^[colorize:%s:110", id, color1, id),
 		})
 	end
 	minetest.register_craft{type = "shapeless", output = cname.."_dust1 2", recipe = {cname.."_dust2"}}
@@ -57,6 +57,13 @@ function register_metal(name, def)
 	minetest.register_craft{type = "shapeless", output = cname.."_dust2", recipe = {cname.."_dust1", cname.."_dust1"}}
 	minetest.register_craft{type = "shapeless", output = cname.."_dust3", recipe = {cname.."_dust2", cname.."_dust2"}}
 	minetest.register_craft{type = "shapeless", output = cname.."_dust3", recipe = {cname.."_dust1", cname.."_dust1", cname.."_dust1", cname.."_dust1"}}
+	for id, size in ipairs(item_size) do
+		minetest.register_craftitem(string.format("%s_fine_powder%d", rname, id), {
+			description = string.format("%s Pile of Fine %s Powder", size, longname),
+			inventory_image = string.format("rotary_dust%d_light.png^[colorize:%s:190", id, color1, id),
+		})
+	end
+	-- no mixing! use precision balance
 -- Plates
 -- Gears
 	if def.machinery ~= false then
