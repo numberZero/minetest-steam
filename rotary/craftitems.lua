@@ -1,95 +1,75 @@
 -- This file is part of the steam/rotary Minetest mod
 
-local metal = {}
-
 local item_size = {
 	"Small",
 	"Medium",
 	"Large",
 }
 
-local register_metal, register_gears;
-
-local function process_name(name)
-	local override, modname, basename = string.match(name, "^(:?)([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)$")
-	if basename then
-		if override ~= ":" and modname ~= minetest.get_current_modname() then
-			error(string.format("Attempt to register %s:%s from mod %s (use :mod:item to override)", modname, basename, minetest.get_current_modname()))
-		end
-		return modname..":"..basename, override..modname..":"..basename, modname.."_"..basename
-	end
+local function get_local_name(cname)
+	return string.format("rotary:%s_%s", unpack(string.split(cname, ":")))
 end
 
-function register_metal(name, def)
-	local cname, rname, tname = process_name(name)
-	local longname = def.description or cname
-	local color1 = def.color or "#F0F"
-	local color2 = def.ore_color or "#310"
--- Ingot
+local function on_add_material(cname, material)
+	if material.kind ~= "metal" then
+		return
+	end
+	local localname = get_local_name(cname)
+	local longname = material.name or cname
+	local color1 = material.colors[1] or "#F0F"
+	local color2 = material.colors[2] or "#310"
 -- Crushed metal
-	minetest.register_craftitem(string.format("%s_crushed", rname), {
+	minetest.register_craftitem(string.format("%s_crushed", localname), {
 		description = string.format("Crushed %s", longname),
 		inventory_image = string.format("rotary_crushed_ore_light_1.png^[colorize:%s:100^(rotary_crushed_ore_light_2.png^[colorize:%s:150)", color1, color1),
 	})
--- Ore
-	if def.ore ~= false then
--- Lump
-		if type(def.ore) ~= "string" then
-			minetest.log("info", "Registering ore for " .. cname)
-			local orename = string.format("%s_ore", rname)
-			local oredef = def.ore or {
-				description = string.format("%s Ore", longname),
-				inventory_image = string.format("%s_ore.png", tname),
-			}
-			minetest.register_craftitem(orename, oredef)
-			def.ore = orename
-		end
 -- Processed ore
-		minetest.register_craftitem(string.format("%s_crushed_ore", rname), {
+	if material.forms.ore then
+		minetest.register_craftitem(string.format("%s_crushed_ore", localname), {
 			description = string.format("Crushed %s Ore", longname),
 			inventory_image = string.format("rotary_crushed_ore_light_1.png^[colorize:%s:150^(rotary_crushed_ore_light_2.png^[colorize:%s:200)", color1, color2),
 		})
 	end
 -- Metal dust
 	for id, size in ipairs(item_size) do
-		minetest.register_craftitem(string.format("%s_dust%d", rname, id), {
+		minetest.register_craftitem(string.format("%s_dust%d", localname, id), {
 			description = string.format("%s Pile of %s Dust", size, longname),
 			inventory_image = string.format("rotary_dust%d_light.png^[colorize:%s:110", id, color1, id),
 		})
 	end
-	minetest.register_craft{type = "shapeless", output = cname.."_dust1 2", recipe = {cname.."_dust2"}}
-	minetest.register_craft{type = "shapeless", output = cname.."_dust2 2", recipe = {cname.."_dust3"}}
-	minetest.register_craft{type = "shapeless", output = cname.."_dust2", recipe = {cname.."_dust1", cname.."_dust1"}}
-	minetest.register_craft{type = "shapeless", output = cname.."_dust3", recipe = {cname.."_dust2", cname.."_dust2"}}
-	minetest.register_craft{type = "shapeless", output = cname.."_dust3", recipe = {cname.."_dust1", cname.."_dust1", cname.."_dust1", cname.."_dust1"}}
+	minetest.register_craft{type = "shapeless", output = localname.."_dust1 2", recipe = {localname.."_dust2"}}
+	minetest.register_craft{type = "shapeless", output = localname.."_dust2 2", recipe = {localname.."_dust3"}}
+	minetest.register_craft{type = "shapeless", output = localname.."_dust2", recipe = {localname.."_dust1", localname.."_dust1"}}
+	minetest.register_craft{type = "shapeless", output = localname.."_dust3", recipe = {localname.."_dust2", localname.."_dust2"}}
+	minetest.register_craft{type = "shapeless", output = localname.."_dust3", recipe = {localname.."_dust1", localname.."_dust1", localname.."_dust1", localname.."_dust1"}}
 	for id, size in ipairs(item_size) do
-		minetest.register_craftitem(string.format("%s_fine_powder%d", rname, id), {
+		minetest.register_craftitem(string.format("%s_fine_powder%d", localname, id), {
 			description = string.format("%s Pile of Fine %s Powder", size, longname),
 			inventory_image = string.format("rotary_dust%d_light.png^[colorize:%s:190", id, color1, id),
 		})
 	end
 	-- no mixing! use precision balance
 -- Plates
-	minetest.register_craftitem(string.format("%s_plate", rname), {
+	minetest.register_craftitem(string.format("%s_plate", localname), {
 		description = string.format("%s Plate", longname),
 		inventory_image = string.format("rotary_plate_light.png^[colorize:%s:200", color1),
 	})
 -- Gears
-	if def.machinery ~= false then
-		register_gears(name, longname, color1)
-	end
+	register_gears(cname)
 end
 
-function register_gears(name, longname, color)
-	local cname, rname, tname = process_name(name)
+function register_gears(cname)
+	local localname = get_local_name(cname)
+	local material = metallic.materials[cname]
 	for id, size in ipairs(item_size) do
-		minetest.register_craftitem(string.format("%s_gear%d", rname, id), {
-			description = string.format("%s %s Gear", size, longname),
-			inventory_image = string.format("rotary_gear%d_light.png^[colorize:%s:200", id, color),
+		minetest.register_craftitem(string.format("%s_gear%d", localname, id), {
+			description = string.format("%s %s Gear", size, material.name),
+			inventory_image = string.format("rotary_gear%d_light.png^[colorize:%s:200", id, material.color),
 		})
 	end
 end
 
+--[[
 register_metal("rotary:dark_iron", {
 	description = "Dark Iron",
 	color = "#3c3450",
@@ -122,6 +102,9 @@ register_metal("rotary:bronze", {
 	color = "#c60",
 	ore = false,
 })
+]]
 
-register_gears("rotary:wood", "Wooden", "#420")
-register_gears("rotary:mese", "Mese", "#ef0")
+metallic.import_material:add_hook(on_add_material)
+
+register_gears("default:wood")
+register_gears("default:mese")
