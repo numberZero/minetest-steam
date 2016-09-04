@@ -8,12 +8,24 @@ rotary.nodebox = {
 	shaft_x	= {-0.500, -0.125, -0.125, 0.500, 0.125, 0.125},
 	shaft_y	= {-0.125, -0.500, -0.125, 0.125, 0.500, 0.125},
 	shaft_z	= {-0.125, -0.125, -0.500, 0.125, 0.125, 0.500},
+	shaft_xm	= {-0.500, -0.125, -0.125, -0.250, 0.125, 0.125},
+	shaft_xp	= {0.250, -0.125, -0.125, 0.500, 0.125, 0.125},
+	shaft_ym	= {-0.125, -0.500, -0.125, 0.125, -0.250, 0.125},
+	shaft_yp	= {-0.125, 0.250, -0.125, 0.125, 0.500, 0.125},
+	shaft_zm	= {-0.125, -0.125, -0.500, 0.125, 0.125, -0.250},
+	shaft_zp	= {-0.125, -0.125, 0.250, 0.125, 0.125, 0.500},
 	input_ym	= {-0.0625, -0.5625, -0.0625, 0.0625, 0.5000, 0.0625},
 }
 
 rotary.nodebox.shaft_u = rotary.nodebox.shaft_z
 rotary.nodebox.shaft_v = rotary.nodebox.shaft_x
 rotary.nodebox.shaft_w = rotary.nodebox.shaft_y
+rotary.nodebox.shaft_um = rotary.nodebox.shaft_zm
+rotary.nodebox.shaft_vm = rotary.nodebox.shaft_xm
+rotary.nodebox.shaft_wm = rotary.nodebox.shaft_ym
+rotary.nodebox.shaft_up = rotary.nodebox.shaft_zp
+rotary.nodebox.shaft_vp = rotary.nodebox.shaft_xp
+rotary.nodebox.shaft_wp = rotary.nodebox.shaft_yp
 rotary.nodebox.input_wm = rotary.nodebox.input_ym
 
 rotary.time_speed = tonumber(minetest.setting_get("time_speed"))
@@ -22,6 +34,7 @@ rotary.tick_length = rotary.time_speed
 local path = minetest.get_modpath("rotary")
 dofile(path.."/util.lua")
 dofile(path.."/craftitems.lua")
+dofile(path.."/shaft.lua")
 dofile(path.."/gearbox.lua")
 dofile(path.."/splitter.lua")
 dofile(path.."/generator.lua")

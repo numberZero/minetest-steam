@@ -33,7 +33,7 @@ local function splitter_cb(pos, node, def, speed, dir)
 		return 0, 0 -- incorrect input direction
 	end
 	local meta = minetest.get_meta(pos)
-	local output_dir = { tripod.w, tripod.u, tripod.u.n, tripod.v, tripod.v.n }
+	local output_dir = { tripod.u, tripod.u.n }
 	local output_torque = {}
 	local torque = 3
 	local inertia = 1
@@ -52,12 +52,12 @@ local function splitter_cb(pos, node, def, speed, dir)
 end
 
 minetest.register_node("rotary:splitter", {
-	description = "Frictionless Splitter",
+	description = "Splitter",
 	tiles = {
-		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png",
 		"rotary_dark_iron_half_block.png^rotary_input.png",
-		"rotary_dark_iron_half_block.png^rotary_output.png",
-		"rotary_dark_iron_half_block.png^rotary_output.png",
+		"rotary_dark_iron_half_block.png",
+		"rotary_dark_iron_half_block.png",
 		"rotary_dark_iron_half_block.png^rotary_output.png",
 		"rotary_dark_iron_half_block.png^rotary_output.png",
 	},
@@ -71,10 +71,9 @@ minetest.register_node("rotary:splitter", {
 		type = "fixed",
 		fixed = {
 			rotary.nodebox.casing_half,
-			rotary.nodebox.shaft_u,
-			rotary.nodebox.shaft_v,
-			rotary.nodebox.shaft_w,
-			rotary.nodebox.input_wm,
+			rotary.nodebox.shaft_wm,
+			rotary.nodebox.shaft_um,
+			rotary.nodebox.shaft_up,
 		},
 	},
 	sunlight_propagates = true,

@@ -74,6 +74,7 @@ local function step_generator(pos, node, def)
 	if cdef then
 		used_torque, added_inertia = cdef.rotary.passive(cpos, cnode, cdef, speed, tripod.u)
 	end
+	used_torque = used_torque + friction_torque
 	local used_power = used_torque * speed
 	local inertia = base_inertia + added_inertia
 	local base_energy = base_inertia * speed * speed / 2
@@ -81,9 +82,9 @@ local function step_generator(pos, node, def)
 
 	update_formspec(meta, inv, speed, gen_power, gen_torque, heat_power, used_power, used_torque, burn, base_energy, energy)
 
-	local acceleration_torque = gen_torque - used_torque - friction_torque
+	local acceleration_torque = gen_torque - used_torque
 	local new_speed = speed + rotary.tick_length * acceleration_torque / inertia
-	local stabile_speed = eta * heat_power / (used_torque + friction_torque)
+	local stabile_speed = eta * heat_power / used_torque
 	if new_speed < 0 then
 		speed = 0
 	elseif speed < mode_change_speed and new_speed > mode_change_speed then

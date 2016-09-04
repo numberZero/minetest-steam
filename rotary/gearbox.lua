@@ -74,8 +74,8 @@ minetest.register_node("rotary:gearbox", {
 		type = "fixed",
 		fixed = {
 			rotary.nodebox.casing_half,
-			rotary.nodebox.shaft_w,
-			rotary.nodebox.input_wm,
+			rotary.nodebox.shaft_wm,
+			rotary.nodebox.shaft_wp,
 		},
 	},
 	sunlight_propagates = true,
