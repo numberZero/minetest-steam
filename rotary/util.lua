@@ -64,3 +64,69 @@ function rotary.facedir_to_tripod_gbox(facedir)
 		w = map2[facedir],
 	}
 end
+
+local min_scale = -1
+local max_scale = 5
+local prefixes = {
+	[-1] = "m",
+	[0] = "",
+	"k",
+	"M",
+	"G",
+	"T",
+	"P",
+}
+
+function rotary.format_number(value)
+	value = value or 0
+	local scale1 = math.floor(math.log10(value))
+	local scale = math.floor(scale1 / 3)
+	if scale > max_scale then
+		return string.format("%.3e ", value)
+	end
+	if scale < min_scale then
+		value = 0
+		scale = 0
+	end
+	return string.format("%.3g %s", value * math.pow(1000, -scale), prefixes[scale])
+end
+
+function rotary.format_power(value)
+	return rotary.format_number(value).."W"
+end
+
+function rotary.format_energy(value)
+	return rotary.format_number(value).."J"
+end
+
+function rotary.format_torque(value)
+	return rotary.format_number(value).."N•m"
+end
+
+function rotary.format_speed(value)
+	return rotary.format_number(value).."rad/s"
+end
+
+local rpm_coef = 60 / (2 * math.pi)
+local rps_coef = 1 / (2 * math.pi)
+
+function rotary.format_speed(value)
+	value = value or 0
+	return string.format("%.1f rot/s", rps_coef * value)
+end
+
+function rotary.format_time(value)
+	value = value or 0
+	local temp = math.floor(value / 60)
+	local s = value - 60 * temp
+	local m = temp % 60
+	local h = temp / 60
+	local result = string.format("%.2g sec", s)
+	if m > 0 then
+		result = string.format("%d min %s", m, result)
+	end
+	if h > 0 then
+		result = string.format("%d hours %s", h, result)
+	end
+	return result
+end

@@ -16,6 +16,9 @@ rotary.nodebox.shaft_v = rotary.nodebox.shaft_x
 rotary.nodebox.shaft_w = rotary.nodebox.shaft_y
 rotary.nodebox.input_wm = rotary.nodebox.input_ym
 
+rotary.time_speed = tonumber(minetest.setting_get("time_speed"))
+rotary.tick_length = rotary.time_speed
+
 local path = minetest.get_modpath("rotary")
 dofile(path.."/util.lua")
 dofile(path.."/craftitems.lua")
@@ -50,10 +53,11 @@ end
 -- @param #number speed
 -- @param core#vector dir	direction _into_ the consumer
 -- @return #number torque (consumed)
+-- @return #number inertia (added)
 local function consume_1(pos, node, def, speed, dir)
 	local tripod = rotary.facedir_to_tripod(node.param2)
 	if not vector.equals(dir, tripod.u) then
-		return nil -- incorrect input direction
+		return 0, 0 -- incorrect input direction
 	end
 	local meta = minetest.get_meta(pos)
 	meta:set_float("input_speed", speed) 
@@ -61,7 +65,7 @@ local function consume_1(pos, node, def, speed, dir)
 		"size[4,2]"
 		.."label[0.5,0.5;Speed: "..speed.."]"
 		)
-	return 30
+	return 100, 160
 end
 
 -------------------------------------------------------------------------------
@@ -80,7 +84,7 @@ local function step_generator_1(pos, node, def)
 	meta:set_string("formspec", 
 		"size[3,1.3]"
 		.."label[0.5,0.0;Admin Generator]"
-		.."label[0,0.4;Speed: "..speed.." rps]"
+		.."label[0,0.4;Speed: "..speed.." rad/s]"
 		.."label[0,0.7;Power: "..power.." W]"
 		.."label[0,1.0;Torque: "..torque.." N•m]"
 		)
